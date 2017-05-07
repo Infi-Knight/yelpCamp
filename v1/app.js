@@ -70,10 +70,16 @@ app.post("/campgrounds", function(req, res){
   var name = req.body.campName;
   var image = req.body.image;
   var newCampground = {name: name, image: image};
-  // Add the new campground to our database
-  campgrounds.push(newCampground);
-  // Redirect the user to campgrounds page
-  res.redirect("/campgrounds");
+  // Add a new campground to our database
+  Campground.create(newCampground, function(err, newlyCreatedCamp){
+    if (err) {
+      console.log("Unable to store the new campground in database");
+      console.log(err);
+    } else {
+        // Redirect the user to campgrounds page
+        res.redirect("/campgrounds");      
+    }
+  });
 });
 
 // Route for ERROR 404
