@@ -16,18 +16,19 @@ var campgroundSchema = new mongoose.Schema({
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
-Campground.create(
-  {
-    name: "Manali",
-    image: "http://www.tourism-of-india.com/pictures/travel_guide/manali-470.jpeg"
-  }, function(err, campground){
-    if (err) {
-      console.log("Hitler has reached your campsite");
-      console.log(err);
-    } else {
-      console.log("Kasol welcomes you!!");
-    }
-  });
+
+// Campground.create(
+//   {
+//     name: "Manali",
+//     image: "http://www.tourism-of-india.com/pictures/travel_guide/manali-470.jpeg"
+//   }, function(err, campground){
+//     if (err) {
+//       console.log("Hitler has reached your campsite");
+//       console.log(err);
+//     } else {
+//       console.log("Kasol welcomes you!!");
+//     }
+//   });
 
 // SOME HARDCODED RAW DATA  
 
@@ -47,7 +48,15 @@ app.get("/", function(req, res){
 
 // Route for the campgrounds
 app.get("/campgrounds", function(req, res){  
-//   res.render("campgrounds", {campgrounds: campgrounds});
+   //   res.render("campgrounds", {campgrounds: campgrounds});
+   // Get all the campgrounds from db
+  Campground.find({}, function(err, allCampgrounds){
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("campgrounds", {campgrounds: allCampgrounds});
+    }
+  });
 });
 
 // Route for showing up a form to submit new campground
