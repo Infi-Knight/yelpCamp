@@ -1,19 +1,44 @@
 var express = require("express");
 var app = express();
 
+var mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/yelp_camp");
+
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
-  var campgrounds = [
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
-      {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"}
-  ];
+// SCHEMA SETUP
+var campgroundSchema = new mongoose.Schema({
+  name: String,
+  image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+Campground.create(
+  {
+    name: "Manali",
+    image: "http://www.tourism-of-india.com/pictures/travel_guide/manali-470.jpeg"
+  }, function(err, campground){
+    if (err) {
+      console.log("Hitler has reached your campsite");
+      console.log(err);
+    } else {
+      console.log("Kasol welcomes you!!");
+    }
+  });
+
+// SOME HARDCODED RAW DATA  
+
+//   var campgrounds = [
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"},
+//       {name: "Kasol", image: "https://www.campingintheforest.co.uk/images/default-source/campsite-images/setthorns/resized-setthrons-reception.jpg?sfvrsn=4"}
+//   ];
 
 // Route for the homepage
 app.get("/", function(req, res){
@@ -22,7 +47,7 @@ app.get("/", function(req, res){
 
 // Route for the campgrounds
 app.get("/campgrounds", function(req, res){  
-  res.render("campgrounds", {campgrounds: campgrounds});
+//   res.render("campgrounds", {campgrounds: campgrounds});
 });
 
 // Route for showing up a form to submit new campground
