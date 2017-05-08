@@ -12,7 +12,8 @@ app.set("view engine", "ejs");
 // SCHEMA SETUP
 var campgroundSchema = new mongoose.Schema({
   name: String,
-  image: String
+  image: String,
+  description: String
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
@@ -20,7 +21,8 @@ var Campground = mongoose.model("Campground", campgroundSchema);
 // Campground.create(
 //   {
 //     name: "Manali",
-//     image: "http://www.tourism-of-india.com/pictures/travel_guide/manali-470.jpeg"
+//     image: "http://www.tourism-of-india.com/pictures/travel_guide/manali-470.jpeg",
+//     description: "A beautiful jungle where you can do lots of mangal"
 //   }, function(err, campground){
 //     if (err) {
 //       console.log("Hitler has reached your campsite");
@@ -46,6 +48,7 @@ app.get("/", function(req, res){
   res.render("landing");
 });
 
+// -------------------- REST -> INDEX -------------------------------
 // Route for the campgrounds
 app.get("/campgrounds", function(req, res){  
    //   res.render("campgrounds", {campgrounds: campgrounds});
@@ -54,22 +57,43 @@ app.get("/campgrounds", function(req, res){
     if (err) {
       console.log(err);
     } else {
-      res.render("campgrounds", {campgrounds: allCampgrounds});
+      res.render("index", {campgrounds: allCampgrounds});
     }
   });
 });
 
+// -------------------------- REST -> NEW ----------------------------
 // Route for showing up a form to submit new campground
 app.get("/campgrounds/new", function(req, res){
   res.render("new");
 });
 
+
+// --------------------- REST -> SHOW -------------------------------
+// NOTE: This SHOW route should come after NEW route otherwise we will
+//       get a SHOW page even on clicking NEW 
+app.get("/campgrounds/:id", function(req, res){
+  // Find the campground with the id provided
+  var id = req.params.id;
+  Campground.findById(id, function(err, foundCampground){
+    if (err) {
+      console.log(err);
+    } else {
+        // Show that campground using the show template
+        res.render("show", {campground: foundCampground});      
+    }
+  });
+
+});
+
+// -------------------------- REST -> CREATE --------------------------
 // POST Route for adding a new campground following REST naming conventions
 app.post("/campgrounds", function(req, res){
   // Get data from the user for adding a new campground
   var name = req.body.campName;
   var image = req.body.image;
-  var newCampground = {name: name, image: image};
+  var desc = req.body.description;
+  var newCampground = {name: name, image: image, description: desc};
   // Add a new campground to our database
   Campground.create(newCampground, function(err, newlyCreatedCamp){
     if (err) {
@@ -81,6 +105,7 @@ app.post("/campgrounds", function(req, res){
     }
   });
 });
+
 
 // Route for ERROR 404
 app.get("*", function(req, res){
