@@ -1,8 +1,12 @@
-var express = require("express"),
-    app = express(),    
-    bodyParser = require("body-parser"),
-    mongoose = require("mongoose"),
-    Campground = require("./models/campground");
+var express     = require("express"),
+    app         = express(),    
+    bodyParser  = require("body-parser"),
+    mongoose    = require("mongoose"),
+    Campground  = require("./models/campground"),
+    seedDB      = require("./seeds");
+
+// SEED DATA 
+seedDB();
     
 mongoose.connect("mongodb://localhost/yelp_camp");
 
