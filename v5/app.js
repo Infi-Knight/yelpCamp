@@ -102,7 +102,7 @@ app.post("/campgrounds", function(req, res){
 });
 
 //======================== COMMENT ROUTES =============================
-app.get("/campgrounds/:id/comments/new", function(req, res){
+app.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res){
   // Find a campground by id
   Campground.findById(req.params.id, function(err, foundCamp){
     if (err) {
@@ -113,7 +113,7 @@ app.get("/campgrounds/:id/comments/new", function(req, res){
   });  
 });
 
-app.post("/campgrounds/:id/comments", function(req, res){
+app.post("/campgrounds/:id/comments", isLoggedIn, function(req, res){
   // Lookup campground by ID
   Campground.findById(req.params.id, function(err, campground){
     if (err) {
@@ -174,6 +174,20 @@ app.post("/login", passport.authenticate("local", {
   
 });
 
+// Add Logout route
+app.get("/logout", function(req, res){
+  req.logout();
+  res.redirect("/");
+});
+
+//=====================================================================
+// Add our middleware to prevent unauthorised access to comments
+function isLoggedIn(req, res, next){
+  if (req.isAuthenticated()) {
+    return next();
+  }  
+  res.redirect("/login");
+}
 
 //=====================================================================
 
