@@ -31,6 +31,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Our own middleware which will send req.user to the required templates
+app.use(function(req, res, next){
+  res.locals.currentUser = req.user;
+  next();
+});
+
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
@@ -45,12 +51,15 @@ app.get("/", function(req, res){
 // -------------------- REST -> INDEX -------------------------------
 // Route for the campgrounds
 app.get("/campgrounds", function(req, res){  
+//   console.log(req.user);  // This will be undefined if no user is logged in
    //   res.render("campgrounds", {campgrounds: campgrounds});
    // Get all the campgrounds from db
   Campground.find({}, function(err, allCampgrounds){
     if (err) {
       console.log(err);
     } else {
+      // Current user will help us in customizing content and determining
+      // if someone is logged in or not
       res.render("campgrounds/index", {campgrounds: allCampgrounds});
     }
   });
