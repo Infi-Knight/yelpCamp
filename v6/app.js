@@ -1,0 +1,60 @@
+var express       = require("express"),
+    app           = express(),    
+    bodyParser    = require("body-parser"),
+    mongoose      = require("mongoose"),
+    passport      = require("passport"),
+    LocalStrategy = require("passport-local"),
+    Campground    = require("./models/campground"),
+    Comment       = require("./models/comment"),
+    User          = require("./models/user"),
+    seedDB        = require("./seeds");
+
+var campgroundRoutes  = require("./routes/campgrounds"),
+    commentRoutes     = require("./routes/comments"),
+    indexRoutes        = require("./routes/index");
+    
+
+// Connect to local database
+mongoose.connect("mongodb://localhost/yelp_camp");
+
+// SEED DATA Into the database
+seedDB();
+
+// PASSPORT CONFIGURATION
+// Set express session
+app.use(require("express-session")({
+  secret: "Rictumsempra Obliviate Repairo",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+// authenticate() comes from passport-local-mongoose
+passport.use(new LocalStrategy(User.authenticate()));
+// 
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// Our own middleware which will send req.user to the required templates
+app.use(function(req, res, next){
+  res.locals.currentUser = req.user;
+  next();
+});
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.set("view engine", "ejs");
+app.use(express.static(__dirname + "/public"));
+// console.log(__dirname);
+
+app.use(campgroundRoutes);
+app.use(commentRoutes);
+app.use(indexRoutes);
+
+
+
+
+// Listener
+app.listen(3000, process.env.IP, function(){
+  console.log("Server has started");
+});
