@@ -1,13 +1,10 @@
 var express     = require("express");
 var router      = express.Router();
-
 var Campground  = require("../models/campground");
-
-
 
 // -------------------- REST -> INDEX -------------------------------
 // Route for the campgrounds
-router.get("/campgrounds", function(req, res){  
+router.get("/", function(req, res){  
 //   console.log(req.user);  // This will be undefined if no user is logged in
    //   res.render("campgrounds", {campgrounds: campgrounds});
    // Get all the campgrounds from db
@@ -24,15 +21,14 @@ router.get("/campgrounds", function(req, res){
 
 // -------------------------- REST -> NEW ----------------------------
 // Route for showing up a form to submit new campground
-router.get("/campgrounds/new", function(req, res){
+router.get("/new", function(req, res){
   res.render("campgrounds/new");
 });
-
 
 // --------------------- REST -> SHOW -------------------------------
 // NOTE: This SHOW route should come after NEW route otherwise we will
 //       get a SHOW page even on clicking NEW 
-router.get("/campgrounds/:id", function(req, res){
+router.get("/:id", function(req, res){
   // Find the campground with the id provided
   var id = req.params.id;
   // Now populate that campgrounds with the comment
@@ -44,12 +40,11 @@ router.get("/campgrounds/:id", function(req, res){
         res.render("campgrounds/show", {campground: foundCampground});      
     }
   });
-
 });
 
 // -------------------------- REST -> CREATE --------------------------
 // POST Route for adding a new campground following REST naming conventions
-router.post("/campgrounds", function(req, res){
+router.post("/", function(req, res){
   // Get data from the user for adding a new campground
   var name = req.body.campName;
   var image = req.body.image;
@@ -67,7 +62,6 @@ router.post("/campgrounds", function(req, res){
   });
 });
 
-
 //=====================================================================
 // Add our middleware to prevent unauthorised access to comments
 function isLoggedIn(req, res, next){
@@ -76,7 +70,6 @@ function isLoggedIn(req, res, next){
   }  
   res.redirect("/login");
 }
-
 //=====================================================================
 
 module.exports = router;

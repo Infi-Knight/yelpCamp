@@ -1,13 +1,14 @@
 var express = require("express");
-var router  = express.Router();
+// Without mergeParams: true we will not be able to find the id 
+// because during refractoring we have removed /campgrounds/:id/comments
+var router  = express.Router({mergeParams: true});
 
 var Campground  = require("../models/campground");
 var Comment     = require("../models/comment");
 
-
-
-//======================== COMMENT ROUTES =============================
-router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res){
+// Here each route is being added with - /campgrounds/:id/comments at the starting
+// Comments NEW
+router.get("/new", isLoggedIn, function(req, res){
   // Find a campground by id
   Campground.findById(req.params.id, function(err, foundCamp){
     if (err) {
@@ -18,7 +19,8 @@ router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res){
   });  
 });
 
-router.post("/campgrounds/:id/comments", isLoggedIn, function(req, res){
+// Comments CREATE
+router.post("/", isLoggedIn, function(req, res){
   // Lookup campground by ID
   Campground.findById(req.params.id, function(err, campground){
     if (err) {
@@ -41,7 +43,6 @@ router.post("/campgrounds/:id/comments", isLoggedIn, function(req, res){
   // Redirect to the show page
 });
 
-
 //=====================================================================
 // Add our middleware to prevent unauthorised access to comments
 function isLoggedIn(req, res, next){
@@ -50,8 +51,6 @@ function isLoggedIn(req, res, next){
   }  
   res.redirect("/login");
 }
-
 //=====================================================================
-
 
 module.exports = router;

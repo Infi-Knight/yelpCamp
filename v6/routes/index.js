@@ -3,7 +3,6 @@ var router    = express.Router();
 var passport  = require("passport");
 var User      = require("../models/user");
 
-
 // Route for the homepage
 router.get("/", function(req, res){
   res.render("landing");
@@ -59,7 +58,6 @@ function isLoggedIn(req, res, next){
   }  
   res.redirect("/login");
 }
-
 //=====================================================================
 
 // Route for ERROR 404

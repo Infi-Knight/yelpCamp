@@ -9,10 +9,10 @@ var express       = require("express"),
     User          = require("./models/user"),
     seedDB        = require("./seeds");
 
+// Requiring Routess
 var campgroundRoutes  = require("./routes/campgrounds"),
     commentRoutes     = require("./routes/comments"),
-    indexRoutes        = require("./routes/index");
-    
+    indexRoutes        = require("./routes/index");  
 
 // Connect to local database
 mongoose.connect("mongodb://localhost/yelp_camp");
@@ -32,7 +32,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 // authenticate() comes from passport-local-mongoose
 passport.use(new LocalStrategy(User.authenticate()));
-// 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -47,12 +46,10 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 // console.log(__dirname);
 
-app.use(campgroundRoutes);
-app.use(commentRoutes);
+// Use our routes. Also reduce route names by using the requisite strings
+app.use("/campgrounds",campgroundRoutes);
+app.use("/campgrounds/:id/comments",commentRoutes);
 app.use(indexRoutes);
-
-
-
 
 // Listener
 app.listen(3000, process.env.IP, function(){
