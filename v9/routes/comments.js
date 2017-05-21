@@ -48,6 +48,42 @@ router.post("/", isLoggedIn, function(req, res){
   // Redirect to the show page
 });
 
+// COMMENT EDIT ROUTE
+
+// NOTE: our comment has a nested route
+// So path will be: /campgrounds/:id/comments/:comment_id/edit
+router.get("/:comment_id/edit", checkCommentOwnership, function(req, res){
+  Comment.findById(req.params.comment_id, function(err, foundCommment){
+    if (err) {
+      res.redirect("/campgrounds");
+    } else {
+        res.render("comments/edit", {campground_id: req.params.id, comment: foundCommment});
+    }
+  }); 
+});
+
+// COMMENT UPDATE ROUTE
+router.put("/:comment_id", checkCommentOwnership, function(req, res){
+  Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+    if (err) {
+      res.redirect("back");
+    } else {
+      res.redirect("/campgrounds/" + req.params.id);
+    }
+  });
+});
+
+// COMMENT DESTROY ROUTE
+router.delete("/:comment_id", checkCommentOwnership, function(req, res){
+  Comment.findByIdAndRemove(req.params.comment_id, function(err){
+    if (err) {
+      res.redirect("back");
+    } else {
+      res.redirect("/campgrounds/" + req.params.id);
+    }
+  });
+});
+
 //=====================================================================
 // Add our middleware to prevent unauthorised access to comments
 function isLoggedIn(req, res, next){
@@ -55,6 +91,30 @@ function isLoggedIn(req, res, next){
     return next();
   }  
   res.redirect("/login");
+}
+
+//======================================================================
+// Middleware to check the ownership of the campground
+function checkCommentOwnership(req, res, next){
+  // Is a user logged in?   // If not redirect somewhere
+  if (req.isAuthenticated()) {
+      Comment.findById(req.params.comment_id, function(err, foundComment){
+        if (err) {
+          res.redirect("back");
+        } else {
+          // Does this user own the requested comment?
+          // foundComment.author.id === req.user._id will not work because
+          // the first one is a mongoose object and the second one a string.
+          if(foundComment.author.id.equals(req.user._id)) {
+            next();                        
+          } else {
+              res.redirect("back"); 
+          }
+        }
+      });    
+  } else {
+    res.redirect("back"); // Take the user back to wherever he came from
+  }   
 }
 //=====================================================================
 

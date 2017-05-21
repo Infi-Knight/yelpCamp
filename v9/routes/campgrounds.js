@@ -128,8 +128,7 @@ function checkCampOwnership(req, res, next){
           // foundCamp.author.id === req.user._id will not work because
           // the first one is a mongoose object and the second one a string.
           if(foundCamp.author.id.equals(req.user._id)) {
-            next();
-                        
+            next();                        
           } else {
               res.redirect("back"); 
           }
