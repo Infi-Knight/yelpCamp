@@ -19,11 +19,17 @@
           <h4><a><p><%= campground.name %></p></a></h4>
           <p><%= campground.description %></p>
           <p><em>Submitted By: <%= campground.author.username %></em></p>
+          
+          <!-- Display these edit and delete buttons only if there is a user -->
+          <!-- logged in and he has the rights to use these -->
+          <% if(currentUser && campground.author.id.equals(currentUser._id)){ %>
           <a class="btn btn-xs btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
-          <!-- Form to send a DELETE HTTP REQUEST -->
+            <!-- Form to send a DELETE HTTP REQUEST -->
           <form id="delete-form-btn" action="/campgrounds/<%= campground.id %>?_method=DELETE" method="POST">
             <button class="btn btn-xs btn-danger">Delete</button>
           </form>
+          <% } %>
+          
         </div>
       </div>
       
@@ -40,14 +46,10 @@
               <p><%= comment.text %></p>              
             </div>
           </div>
-
         <% }) %>        
       </div>
     </div>
   </div>
 </div>
-
-
-
 
 <% include ../partials/footer %>

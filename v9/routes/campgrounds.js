@@ -66,7 +66,6 @@ router.post("/", isLoggedIn, function(req, res){
       console.log("Unable to store the new campground in database");
       console.log(err);
     } else {
-        console.log(newlyCreatedCamp);
         // Redirect the user to campgrounds page
         res.redirect("/campgrounds");      
     }
@@ -81,7 +80,7 @@ router.get("/:id/edit", checkCampOwnership,  function(req, res){
 });
 
 // UPDATE CAMPGROUND
-router.put("/:id", function(req, res){
+router.put("/:id", checkCampOwnership, function(req, res){
   // Find and update the correct campground
   Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCamp){
     if (err) {
@@ -96,7 +95,7 @@ router.put("/:id", function(req, res){
 });
 
 // DESTROY CAMPGROUND ROUTE
-router.delete("/:id", function(req, res){
+router.delete("/:id", checkCampOwnership, function(req, res){
   // Using the mongoose method remove the campground
   Campground.findByIdAndRemove(req.params.id, function(err){
    if (err) {
