@@ -22,14 +22,21 @@ router.post("/register", function(req, res){
   var newUser = new User({username: req.body.username});
   User.register(newUser, req.body.password, function(err, user){
     if (err) {
-//       console.log(err);
-//       req.flash("error", err.message);
-      return res.render("register");
+      console.log(err);
+      req.flash("error", err.message);
+      // I don't know why but flash messages don't seem to work when I
+      // try to use the following return statement but they work well on 
+      // the redirect statement
+      // return res.render("register");
+      res.redirect("back");
     }
-    passport.authenticate("local")(req, res, function(){
-      req.flash("success", "Welcome to YelpCamp " + user.username);
-      res.redirect("/campgrounds");
-    });
+    // Welcome the user if the sign up was successful
+    if(user){
+      passport.authenticate("local")(req, res, function(){
+        req.flash("success", "Welcome to YelpCamp " + user.username);
+        res.redirect("/campgrounds");
+      });      
+    }
   });
 });
 
